@@ -1,12 +1,9 @@
 package com.newbie.easygo;
 
-import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,19 +14,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TabFragment extends Fragment {
+public class BuyFragment extends Fragment {
     private RecyclerView recyclerView;
     private MainRvAdapter mainRvAdapter;
     private List<GoodData> mList = new ArrayList<>();
-
-    public static TabFragment newInstance(String label) {
-        Bundle args = new Bundle();
-        args.putString("label", label);
-        TabFragment fragment = new TabFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,17 +27,12 @@ public class TabFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_tab, container, false);
-        recyclerView = root.findViewById(R.id.rv);
-        mainRvAdapter = new MainRvAdapter(mList);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(mainRvAdapter);
+        View root = inflater.inflate(R.layout.frgement_buy, container, false);
+        initView(root);
         return root;
     }
 
-    void initData() {
+    void initData(){
         mList.clear();
         for (int i = 0; i < 10; i++) {
             String title = "测试数据" + i;
@@ -59,4 +42,12 @@ public class TabFragment extends Fragment {
         }
     }
 
+    void initView(View root){
+        recyclerView = root.findViewById(R.id.buy_rv);
+        mainRvAdapter = new MainRvAdapter(mList);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(mainRvAdapter);
+    }
 }

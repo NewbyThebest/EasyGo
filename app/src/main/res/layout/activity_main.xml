@@ -1,49 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:orientation="vertical">
 
-    <com.zhouwei.mzbanner.MZBannerView
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/banner"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/tab_main_viewpager"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="10dp"
-        app:open_mz_mode="true"
-        app:canLoop="true"
-        app:indicatorAlign="center"
-        app:indicatorPaddingLeft="10dp"
-        />
-    <LinearLayout
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/banner"
-        android:layout_width="match_parent"
-        android:layout_height="0dp">
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tab_layout"
-            app:tabMode="scrollable"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabIndicator="@drawable/tab_indicator"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:tabTextColor="@android:color/darker_gray"
-            app:tabSelectedTextColor="@android:color/holo_blue_bright"
-            />
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/view_pager"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/tab_layout"
-            />
-
-    </LinearLayout>
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <include layout="@layout/tab_bottom" />
+
+</LinearLayout>

@@ -1,94 +1,139 @@
 package com.newbie.easygo;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.viewpager.widget.ViewPager;
-
-import android.content.Context;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
-import com.google.android.material.tabs.TabLayout;
-import com.zhouwei.mzbanner.MZBannerView;
-import com.zhouwei.mzbanner.holder.MZHolderCreator;
-import com.zhouwei.mzbanner.holder.MZViewHolder;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity implements View.OnClickListener {
+    private LinearLayout mTabMain;
+    private LinearLayout mTabBuy;
+    private LinearLayout mTabMe;
+    private ImageButton mImageTabMain;
+    private ImageButton mImageTabBuy;
+    private ImageButton mImageTabMe;
 
-    private String[] tabs = {"安卓手机", "苹果手机", "台式电脑", "笔记本", "平板", "照相机"};
-    private List<TabFragment> tabFragmentList = new ArrayList<>();
-    private MZBannerView mMZBanner;
+    private ViewPager mViewPager;
+    private TabFragmentViewPagerAdapter mAdapter;
+    private List<Fragment> mFragments;
+
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        TabLayout tabLayout = findViewById(R.id.tab_layout);
-        ViewPager viewPager = findViewById(R.id.view_pager);
-        //添加tab
-        for (int i = 0; i < tabs.length; i++) {
-            tabLayout.addTab(tabLayout.newTab().setText(tabs[i]));
-            tabFragmentList.add(TabFragment.newInstance(tabs[i]));
-        }
+        initView();
+        initClickListener();
+    }
 
-        viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-            @NonNull
+    private void initView() {
+
+        mViewPager = (ViewPager) findViewById(R.id.tab_main_viewpager);
+        mTabMain = (LinearLayout) findViewById(R.id.id_tab_main);
+        mTabBuy = (LinearLayout) findViewById(R.id.id_tab_buy);
+        mTabMe = (LinearLayout) findViewById(R.id.id_tab_me);
+        mImageTabMain = (ImageButton) findViewById(R.id.tab_main_icon_grey);
+        mImageTabBuy = (ImageButton) findViewById(R.id.tab_buy_icon_grey);
+        mImageTabMe = (ImageButton) findViewById(R.id.tab_me_icon_grey);
+
+        mFragments = new ArrayList<Fragment>();
+        Fragment mTab_01 = new MainFragment();
+        Fragment mTab_02 = new BuyFragment();
+        Fragment mTab_03 = new MeFragment();
+        mFragments.add(mTab_01);
+        mFragments.add(mTab_02);
+        mFragments.add(mTab_03);
+
+        mAdapter = new TabFragmentViewPagerAdapter(getSupportFragmentManager(), mFragments);
+        mViewPager.setAdapter(mAdapter);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public Fragment getItem(int position) {
-                return tabFragmentList.get(position);
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            //滑动时 改变图标状态
+            @Override
+            public void onPageSelected(int position) {
+                int currentItem = mViewPager.getCurrentItem();
+                initTabImage();
+                switch (currentItem) {
+                    case 0:
+                        mImageTabMain.setBackgroundResource(R.drawable.ic_main);
+                        break;
+                    case 1:
+                        mImageTabBuy.setBackgroundResource(R.drawable.ic_buy);
+                        break;
+                    case 2:
+                        mImageTabMe.setBackgroundResource(R.drawable.ic_user);
+                        break;
+                }
             }
 
             @Override
-            public int getCount() {
-                return tabFragmentList.size();
-            }
+            public void onPageScrollStateChanged(int state) {
 
-            @Nullable
-            @Override
-            public CharSequence getPageTitle(int position) {
-                return tabs[position];
             }
         });
 
-        //设置TabLayout和ViewPager联动
-        tabLayout.setupWithViewPager(viewPager, false);
-        mMZBanner = findViewById(R.id.banner);
-
-        List<Integer> list = new ArrayList<>();
-        list.add(R.drawable.ic_launcher_background);
-        list.add(R.drawable.ic_launcher_background);
-        list.add(R.drawable.ic_launcher_background);
-
-
-        // 设置数据
-        mMZBanner.setPages(list, new MZHolderCreator<BannerViewHolder>() {
-            @Override
-            public BannerViewHolder createViewHolder() {
-                return new BannerViewHolder();
-            }
-        });
     }
-    public static class BannerViewHolder implements MZViewHolder<Integer> {
-        private ImageView mImageView;
-        @Override
-        public View createView(Context context) {
-            // 返回页面布局
-            View view = LayoutInflater.from(context).inflate(R.layout.banner_item,null);
-            mImageView = (ImageView) view.findViewById(R.id.banner_image);
-            return view;
-        }
 
-        @Override
-        public void onBind(Context context, int position, Integer data) {
-            // 数据绑定
-            mImageView.setImageResource(data);
+    //初始的图标状态(滑动和点击事件改变的时候都要初始化)
+    private void initTabImage() {
+        mImageTabMain.setBackgroundResource(R.drawable.ic_mian_normal);
+        mImageTabBuy.setBackgroundResource(R.drawable.ic_buy_normal);
+        mImageTabMe.setBackgroundResource(R.drawable.ic_user_normal);
+    }
+
+    //设置图标点击监听器
+    private void initClickListener() {
+        mTabMain.setOnClickListener(this);
+        mTabBuy.setOnClickListener(this);
+        mTabMe.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+            case R.id.id_tab_main:
+                // initTabImage();
+                //mImageTabMain.setBackgroundResource(R.drawable.tab_main_icon_green);
+                //注意上面修改的只是图标的状态,还要修改相对应的fragment;
+                setSelect(0);
+                break;
+            case R.id.id_tab_buy:
+                setSelect(1);
+                break;
+            case R.id.id_tab_me:
+                setSelect(2);
+                break;
         }
     }
+
+    //设置将点击的那个图标为亮色,切换内容区域
+    private void setSelect(int i) {
+
+        initTabImage();
+        switch (i) {
+            case 0:
+                mImageTabMain.setBackgroundResource(R.drawable.ic_main);
+                break;
+            case 1:
+                mImageTabBuy.setBackgroundResource(R.drawable.ic_buy);
+                break;
+            case 2:
+                mImageTabMe.setBackgroundResource(R.drawable.ic_user);
+                break;
+            default:
+                break;
+        }
+        mViewPager.setCurrentItem(i);
+    }
+
 }

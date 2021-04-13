@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="个人信息"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:layout_marginTop="50dp"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintEnd_toEndOf="@id/title"
+        app:layout_constraintStart_toStartOf="@id/title"
+        android:src="@drawable/ic_user"
+        android:id="@+id/photo"
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
+
+    <TextView
+        android:textSize="14sp"
+        android:text="用户名"
+        app:layout_constraintTop_toBottomOf="@id/photo"
+        app:layout_constraintEnd_toEndOf="@id/title"
+        app:layout_constraintStart_toStartOf="@id/title"
+        android:id="@+id/userName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:textSize="14sp"
+        android:layout_marginTop="30dp"
+        app:layout_constraintTop_toBottomOf="@id/userName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="手机号码:"
+        android:id="@+id/phoneTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="@id/phoneTitle"
+        app:layout_constraintTop_toBottomOf="@id/phoneTitle"
+        app:layout_constraintEnd_toEndOf="@id/phoneTitle"
+        android:text="123445667"
+        android:layout_marginTop="16dp"
+        android:id="@+id/phoneNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+    <TextView
+        android:textSize="14sp"
+        android:layout_marginTop="30dp"
+        app:layout_constraintTop_toBottomOf="@id/phoneNumber"
+        app:layout_constraintStart_toStartOf="@id/phoneTitle"
+        app:layout_constraintEnd_toEndOf="@id/phoneTitle"
+        android:text="配送地址:"
+        android:id="@+id/addressTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="@id/phoneTitle"
+        app:layout_constraintEnd_toEndOf="@id/phoneTitle"
+        app:layout_constraintTop_toBottomOf="@id/addressTitle"
+        android:text="深圳市腾讯科技大厦"
+        android:layout_marginTop="16dp"
+        android:id="@+id/address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</androidx.constraintlayout.widget.ConstraintLayout>
