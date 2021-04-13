@@ -58,6 +58,7 @@ public class MainFragment extends Fragment {
             tabFragmentList.add(TabFragment.newInstance(tabs[i]));
         }
 
+
         viewPager.setAdapter(new FragmentPagerAdapter(getChildFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
             @NonNull
             @Override

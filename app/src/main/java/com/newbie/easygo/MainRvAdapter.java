@@ -3,6 +3,7 @@ package com.newbie.easygo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,9 +17,18 @@ import java.util.List;
 public class MainRvAdapter extends RecyclerView.Adapter<MainRvAdapter.MyHolder> {
 
     private List<GoodData> mList;//数据源
+    private OnItemClickListener mOnItemClickListener;
 
     MainRvAdapter(List<GoodData> list) {
         mList = list;
+    }
+
+    public interface OnItemClickListener{
+        public void onItemClick();
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
     }
 
     //创建ViewHolder并返回，后续item布局里控件都是从ViewHolder中取出
@@ -38,6 +48,19 @@ public class MainRvAdapter extends RecyclerView.Adapter<MainRvAdapter.MyHolder> 
     public void onBindViewHolder(MyHolder holder, int position) {
         holder.title.setText(mList.get(position).title);
         holder.price.setText(mList.get(position).price);
+        holder.seller.setText(mList.get(position).seller);
+
+        holder.buy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mOnItemClickListener.onItemClick();
+            }
+        });
+
+        if (CommonData.getCommonData().getUserType() == Constants.SELLER){
+            holder.buy.setText("编辑");
+        }
+
         Glide.with(holder.img.getContext()).load(mList.get(position).imgUrl).into(holder.img);
     }
 
@@ -55,6 +78,7 @@ public class MainRvAdapter extends RecyclerView.Adapter<MainRvAdapter.MyHolder> 
         TextView title;
         ImageView img;
         TextView price;
+        TextView seller;
         Button buy;
 
         public MyHolder(View itemView) {
@@ -62,6 +86,7 @@ public class MainRvAdapter extends RecyclerView.Adapter<MainRvAdapter.MyHolder> 
             title = itemView.findViewById(R.id.title);
             img = itemView.findViewById(R.id.img);
             price = itemView.findViewById(R.id.price);
+            seller = itemView.findViewById(R.id.seller);
             buy = itemView.findViewById(R.id.buy);
         }
     }

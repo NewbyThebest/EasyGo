@@ -1,6 +1,7 @@
 package com.newbie.easygo;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -44,6 +45,13 @@ public class TabFragment extends Fragment {
         mainRvAdapter = new MainRvAdapter(mList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mainRvAdapter.setOnItemClickListener(new MainRvAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick() {
+                Intent intent = new Intent(getActivity(), BuyActivity.class);
+                startActivity(intent);
+            }
+        });
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mainRvAdapter);
         return root;
@@ -54,8 +62,9 @@ public class TabFragment extends Fragment {
         for (int i = 0; i < 10; i++) {
             String title = "测试数据" + i;
             String price = "" + (i * i);
+            String seller = "张三";
             String url = "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fpicture.ik123.com%2Fuploads%2Fallimg%2F161203%2F3-1612030ZG5.jpg&refer=http%3A%2F%2Fpicture.ik123.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1620888901&t=01c32eff8a057c03ef89b029b6aaa3f5";
-            mList.add(new GoodData(title,price,url));
+            mList.add(new GoodData(title, price, url, seller));
         }
     }
 

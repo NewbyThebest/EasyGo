@@ -21,10 +21,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
+import static com.newbie.easygo.Constants.BUYER;
+import static com.newbie.easygo.Constants.SELLER;
+
+
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     public final static int REQUEST_CODE = 1024;
-    private final static int BUYER = 0;
-    private final static int SELLER = 1;
     private Button login;
     private EditText user;
     private EditText password;
@@ -102,8 +104,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         switch (v.getId()) {
             case R.id.login:
                 if (checkUserInfo()) {
+                    CommonData.getCommonData().setUserType(type);
                     Intent intent = new Intent(this, MainActivity.class);
-                    intent.putExtra("USER_TYPE", type);
                     startActivity(intent);
                     finish();
                 }
