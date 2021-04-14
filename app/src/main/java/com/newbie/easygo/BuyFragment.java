@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BuyFragment extends Fragment {
+public class BuyFragment extends BaseFragment {
     private RecyclerView recyclerView;
     private MainRvAdapter mainRvAdapter;
     private List<GoodData> mList = new ArrayList<>();
@@ -39,14 +40,19 @@ public class BuyFragment extends Fragment {
             String title = "测试数据" + i;
             String price = "" + (i * i);
             String seller = "张三";
+            String category = "安卓手机";
             String url = "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fpicture.ik123.com%2Fuploads%2Fallimg%2F161203%2F3-1612030ZG5.jpg&refer=http%3A%2F%2Fpicture.ik123.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1620888901&t=01c32eff8a057c03ef89b029b6aaa3f5";
-            mList.add(new GoodData(title, price, url, seller));
+            mList.add(new GoodData(title, price, url, seller, category));
         }
     }
 
     void initView(View root) {
         recyclerView = root.findViewById(R.id.buy_rv);
-        mainRvAdapter = new MainRvAdapter(mList);
+        mainRvAdapter = new MainRvAdapter(mList, false);
+        if (CommonData.getCommonData().getUserType() == Constants.SELLER) {
+            TextView title = root.findViewById(R.id.title);
+            title.setText("出售记录");
+        }
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);

@@ -10,7 +10,7 @@
         android:id="@+id/userType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:text="买家登录"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -86,8 +86,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:background="@android:color/holo_blue_bright"
+        android:background="@drawable/selector_ok_btn"
         android:text="登录"
+        android:textSize="18sp"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="@id/username"
         app:layout_constraintStart_toStartOf="@id/username"
         app:layout_constraintTop_toBottomOf="@id/password" />
@@ -97,8 +99,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="注册"
+        android:text="注册账号"
         android:textSize="18sp"
+        android:textColor="@color/dark_gray"
         app:layout_constraintStart_toStartOf="@id/login"
         app:layout_constraintTop_toBottomOf="@id/login" />
 
@@ -109,6 +112,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="忘记密码"
+        android:textColor="@color/dark_gray"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="@id/login"
         app:layout_constraintTop_toBottomOf="@id/login" />

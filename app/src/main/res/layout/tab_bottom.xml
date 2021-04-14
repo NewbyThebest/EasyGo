@@ -3,13 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingBottom="8dp">
+    android:paddingBottom="4dp">
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="0.5dp"
         android:layout_marginBottom="8dp"
-        android:background="@android:color/darker_gray" />
+        android:background="@color/light_gray" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,8 +26,8 @@
 
         <ImageButton
             android:id="@+id/tab_main_icon_grey"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
             android:background="@drawable/ic_main"
             android:clickable="false" />
 
@@ -36,6 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="主页"
+            android:textSize="12sp"
             android:textColor="#000000" />
     </LinearLayout>
 
@@ -49,8 +50,8 @@
 
         <ImageButton
             android:id="@+id/tab_buy_icon_grey"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
             android:background="@drawable/ic_buy_normal"
             android:clickable="false" />
 
@@ -58,7 +59,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="购物"
+            android:text="历史"
+            android:textSize="12sp"
             android:textColor="#000000" />
     </LinearLayout>
 
@@ -72,8 +74,8 @@
 
         <ImageButton
             android:id="@+id/tab_me_icon_grey"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
             android:background="@drawable/ic_user_normal"
             android:clickable="false" />
 
@@ -82,6 +84,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="个人"
+            android:textSize="12sp"
             android:textColor="#000000" />
     </LinearLayout>
 

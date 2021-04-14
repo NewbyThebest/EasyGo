@@ -18,13 +18,15 @@ public class MainRvAdapter extends RecyclerView.Adapter<MainRvAdapter.MyHolder> 
 
     private List<GoodData> mList;//数据源
     private OnItemClickListener mOnItemClickListener;
+    private boolean mIsShowBtn;
 
-    MainRvAdapter(List<GoodData> list) {
+    MainRvAdapter(List<GoodData> list,boolean isShowBtn) {
         mList = list;
+        mIsShowBtn = isShowBtn;
     }
 
     public interface OnItemClickListener{
-        public void onItemClick();
+        public void onItemClick(GoodData data);
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -47,18 +49,34 @@ public class MainRvAdapter extends RecyclerView.Adapter<MainRvAdapter.MyHolder> 
     @Override
     public void onBindViewHolder(MyHolder holder, int position) {
         holder.title.setText(mList.get(position).title);
-        holder.price.setText(mList.get(position).price);
-        holder.seller.setText(mList.get(position).seller);
+        holder.price.setText("￥" + mList.get(position).price);
+        holder.seller.setText("商家："+ mList.get(position).seller);
 
-        holder.buy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mOnItemClickListener.onItemClick();
-            }
-        });
+        if (mIsShowBtn){
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOnItemClickListener.onItemClick(mList.get(position));
+
+                }
+            });
+            holder.buy.setVisibility(View.VISIBLE);
+            holder.buy.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOnItemClickListener.onItemClick(mList.get(position));
+                }
+            });
+        }else {
+            holder.category.setText("类别："+ mList.get(position).category);
+            holder.category.setVisibility(View.VISIBLE);
+        }
+
+
 
         if (CommonData.getCommonData().getUserType() == Constants.SELLER){
             holder.buy.setText("编辑");
+            holder.seller.setVisibility(View.INVISIBLE);
         }
 
         Glide.with(holder.img.getContext()).load(mList.get(position).imgUrl).into(holder.img);
@@ -79,6 +97,7 @@ public class MainRvAdapter extends RecyclerView.Adapter<MainRvAdapter.MyHolder> 
         ImageView img;
         TextView price;
         TextView seller;
+        TextView category;
         Button buy;
 
         public MyHolder(View itemView) {
@@ -87,6 +106,7 @@ public class MainRvAdapter extends RecyclerView.Adapter<MainRvAdapter.MyHolder> 
             img = itemView.findViewById(R.id.img);
             price = itemView.findViewById(R.id.price);
             seller = itemView.findViewById(R.id.seller);
+            category = itemView.findViewById(R.id.tv_category);
             buy = itemView.findViewById(R.id.buy);
         }
     }

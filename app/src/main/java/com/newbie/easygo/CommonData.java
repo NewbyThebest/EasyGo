@@ -1,7 +1,7 @@
 package com.newbie.easygo;
 
 class CommonData {
-
+    private String[] tabs = {"安卓手机", "苹果手机", "台式电脑", "笔记本", "平板", "照相机"};
 
     private int userType;
     private static CommonData mCommonData = new CommonData();
@@ -23,4 +23,7 @@ class CommonData {
     }
 
 
+    public String[] getTabs() {
+        return tabs;
+    }
 }

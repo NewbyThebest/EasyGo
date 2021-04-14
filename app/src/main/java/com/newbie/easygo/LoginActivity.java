@@ -25,7 +25,7 @@ import static com.newbie.easygo.Constants.BUYER;
 import static com.newbie.easygo.Constants.SELLER;
 
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends BaseActivity implements View.OnClickListener {
     public final static int REQUEST_CODE = 1024;
     private Button login;
     private EditText user;

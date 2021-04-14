@@ -1,11 +1,14 @@
 package com.newbie.easygo;
 
-public class GoodData {
-    GoodData(String title,String price,String url,String seller){
+import java.io.Serializable;
+
+public class GoodData implements Serializable {
+    GoodData(String title,String price,String url,String seller,String category){
         this.title = title;
         this.price = price;
         this.imgUrl = url;
         this.seller = seller;
+        this.category = category;
     }
     public String getTitle() {
         return title;
@@ -44,5 +47,15 @@ public class GoodData {
     }
 
     String seller;
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    String category;
 
 }
