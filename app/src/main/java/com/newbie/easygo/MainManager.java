@@ -20,7 +20,15 @@ import com.bumptech.glide.Glide;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainManager {
     private static MainManager manager = new MainManager();
@@ -31,6 +39,31 @@ public class MainManager {
 
     public static MainManager getInstance() {
         return manager;
+    }
+
+    void initRetrofit(){
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://192.168.31.204:8080")
+                .addConverterFactory(GsonConverterFactory.create())//解
+                .build();     //创建Retrofit对象
+        Map map = new HashMap();
+        map.put("id","zhangsan");
+        map.put("psw","22");
+        GetRequest_Interface service = retrofit.create(GetRequest_Interface.class);
+        Call<GoodData> call = service.getCall(map);        //创建访问API的请求
+        // 用法和OkHttp的call如出一辙
+        // 不同的是如果是Android系统回调方法执行在主线程
+        call.enqueue(new Callback<GoodData>() {         //发送请求
+            @Override
+            //处理结果
+            public void onResponse(Call<GoodData> call, Response<GoodData> response) {
+                Object data = response;
+            }
+            @Override
+            public void onFailure(Call<GoodData> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
     void showGoodsEditDialog(BaseFragment fragment,  GoodData data) {
