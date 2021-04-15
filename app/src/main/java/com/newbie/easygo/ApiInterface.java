@@ -17,11 +17,35 @@ public interface ApiInterface {
     Observable<Boolean> addUserInfo(@FieldMap Map<String,  String> map);
 
     @FormUrlEncoded
-    @POST("updateUserInfo")
-    Observable<String> updateUserInfo(@FieldMap Map<String,  String> map);
+    @POST("UpdateUserInfo")
+    Observable<Boolean> updateUserInfo(@FieldMap Map<String,  String> map);
 
     @FormUrlEncoded
     @POST("uoloadImg")
-    Observable<String> uploadImg(@FieldMap Map<String,  String> map);
+    Observable<GoodData> uploadImg(@FieldMap Map<String,  String> map);
+
+    @FormUrlEncoded
+    @POST("queryCategoryGoods")
+    Observable<String> queryCategoryGoods(@FieldMap Map<String,  String> map);
+
+    @FormUrlEncoded
+    @POST("queryBuyerGoods")
+    Observable<String> queryBuyerGoods(@FieldMap Map<String,  String> map);
+
+    @FormUrlEncoded
+    @POST("querySellerGoods")
+    Observable<String> querySellerGoods(@FieldMap Map<String,  String> map);
+
+    @FormUrlEncoded
+    @POST("addGoods")
+    Observable<String> addGoods(@FieldMap Map<String,  String> map);
+
+    @FormUrlEncoded
+    @POST("updateGoods")
+    Observable<String> updateGoods(@FieldMap Map<String,  String> map);
+
+    @FormUrlEncoded
+    @POST("deleteGoods")
+    Observable<String> deleteGoods(@FieldMap Map<String,  String> map);
 
 }

@@ -29,6 +29,8 @@ import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
+import static com.newbie.easygo.Constants.BASE_IP;
+
 public class MainManager {
     private static MainManager manager;
     private ApiInterface mNetService;
@@ -50,8 +52,9 @@ public class MainManager {
     }
 
     void initRetrofit(){
+        String BASE_URL = "http://" + BASE_IP + "/EasyGo/Data/";
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Constants.BASE_URL)
+                .baseUrl(BASE_URL)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();

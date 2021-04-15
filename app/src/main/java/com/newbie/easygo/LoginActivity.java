@@ -9,7 +9,10 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -45,6 +48,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private ImageView eye;
     private boolean isOpen;
     private int type = BUYER;
+    private int count = 0;
 
 
     @Override
@@ -153,6 +157,32 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 builder.setPositiveButton("我已知晓", null);
                 Dialog dialog = builder.create();
                 dialog.show();
+                break;
+            case R.id.userType:
+                count++;
+                if (count == 3){
+                    AlertDialog.Builder b = new AlertDialog.Builder(this);
+                    View view = LayoutInflater.from(this).inflate(R.layout.dialog_edit, null, false);
+                    EditText ip = view.findViewById(R.id.ipEdit);
+                    Button ok = view.findViewById(R.id.btnOk);
+                    Button no = view.findViewById(R.id.btnNo);
+                    b.setView(view);
+                    Dialog d = b.create();
+                    Window window = d.getWindow();
+                    window.setBackgroundDrawableResource(R.drawable.dialog_bg);
+                    ok.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Constants.BASE_IP = ip.getText().toString();
+                            MainManager.getInstance().initRetrofit();
+                            d.dismiss();
+                        }
+                    });
+
+                    d.show();
+                    count = 0;
+                }
+
                 break;
         }
     }

@@ -3,6 +3,20 @@ package com.newbie.easygo;
 import java.io.Serializable;
 
 public class GoodData implements Serializable {
+
+    String uid = "";
+    //name
+    String title = "";
+    //phone
+    String price = "";
+    //photo
+    String imgUrl= "";
+    //password
+    String seller= "";
+    //address
+    String category= "";
+
+
     GoodData(String title,String price,String url,String seller,String category){
         this.title = title;
         this.price = price;
@@ -37,10 +51,6 @@ public class GoodData implements Serializable {
         this.imgUrl = imgUrl;
     }
 
-    String title;
-    String price;
-    String imgUrl;
-
     public String getSeller() {
         return seller;
     }
@@ -49,7 +59,7 @@ public class GoodData implements Serializable {
         this.seller = seller;
     }
 
-    String seller;
+
 
     public String getCategory() {
         return category;
@@ -59,7 +69,7 @@ public class GoodData implements Serializable {
         this.category = category;
     }
 
-    String category;
+
 
     public String getUid() {
         return uid;
@@ -69,6 +79,6 @@ public class GoodData implements Serializable {
         this.uid = uid;
     }
 
-    String uid;
+
 
 }

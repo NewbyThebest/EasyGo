@@ -29,6 +29,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 import static android.app.Activity.RESULT_OK;
+import static com.newbie.easygo.Constants.BASE_IP;
 
 public class MeFragment extends BaseFragment implements View.OnClickListener {
     private ImageView photo;
@@ -58,11 +59,7 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
     }
 
     void initData() {
-        String name = "张三";
-        String phone = "12345568901";
-        String address = "广东深圳市南山区腾讯科技大厦";
-        String url = "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fpicture.ik123.com%2Fuploads%2Fallimg%2F161203%2F3-1612030ZG5.jpg&refer=http%3A%2F%2Fpicture.ik123.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1620888901&t=01c32eff8a057c03ef89b029b6aaa3f5";
-        mData = new GoodData(name, phone, url, "", address);
+        mData = CommonData.getCommonData().getUserInfo();
     }
 
 
@@ -88,7 +85,9 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
             TextView addressTitle = root.findViewById(R.id.addressTitle);
             addressTitle.setText("商家地址");
         }
-        Glide.with(getContext()).load(mData.imgUrl).into(photo);
+        if (!TextUtils.isEmpty(mData.imgUrl)){
+            Glide.with(getContext()).load(mData.imgUrl).into(photo);
+        }
         button.setOnClickListener(this);
         photo.setOnClickListener(this);
         changePsw.setOnClickListener(this);
@@ -152,7 +151,7 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
         MainManager.getInstance().getNetService().uploadImg(map)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<String>() {
+                .subscribe(new Observer<GoodData>() {
                     @Override
                     public void onCompleted() {
                     }
@@ -163,22 +162,27 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
                     }
 
                     @Override
-                    public void onNext(String result) {
-                        if (!TextUtils.isEmpty(result)) {
-                            updateUserInfo(result);
+                    public void onNext(GoodData result) {
+                        if (!TextUtils.isEmpty(result.imgUrl)) {
+                            updateUserInfo(result.imgUrl);
                         }
                     }
                 });
     }
 
-    void updateUserInfo(String url){
+    void updateUserInfo(String name){
         Map<String, String> map = new HashMap<>();
+        String url = "http://" + BASE_IP + "/EasyGo/img/" + name;
         map.put("img", url);
+        map.put("password", CommonData.getCommonData().getUserInfo().seller);
+        map.put("phone", CommonData.getCommonData().getUserInfo().price);
+        map.put("address", CommonData.getCommonData().getUserInfo().category);
+        map.put("name", CommonData.getCommonData().getUserInfo().title);
         map.put("uid", CommonData.getCommonData().getUserInfo().uid);
         MainManager.getInstance().getNetService().updateUserInfo(map)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<String>() {
+                .subscribe(new Observer<Boolean>() {
                     @Override
                     public void onCompleted() {
                     }
@@ -189,9 +193,9 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
                     }
 
                     @Override
-                    public void onNext(String result) {
-                        if (!TextUtils.isEmpty(result)) {
-                            GlideEngine.getInstance().loadImage(getContext(), result, photo);
+                    public void onNext(Boolean result) {
+                        if (result) {
+                            GlideEngine.getInstance().loadImage(getContext(), url, photo);
                         }else {
                             Toast.makeText(getContext(), "更新头像失败，请重试！", Toast.LENGTH_LONG).show();
                         }

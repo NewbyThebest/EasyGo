@@ -20,14 +20,22 @@ import com.bumptech.glide.Glide;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
+import static com.newbie.easygo.Constants.BASE_IP;
 
 public class CommonUtil {
-    public static void showGoodsEditDialog(BaseFragment fragment,  GoodData data) {
+    public static void showGoodsEditDialog(BaseFragment fragment, GoodData data) {
         EditDialogFragment dialogFragment = new EditDialogFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable("data",data);
+        bundle.putSerializable("data", data);
         dialogFragment.setArguments(bundle);
-        dialogFragment.show(fragment.getChildFragmentManager(),"edit");
+        dialogFragment.show(fragment.getChildFragmentManager(), "edit");
     }
 
     public static void showUserEditDialog(BaseFragment fragment, GoodData data) {
@@ -52,10 +60,46 @@ public class CommonUtil {
         commit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                data.title = etName.getText().toString();
-                data.price = etPhone.getText().toString();
-                data.category = address.getText().toString();
-                fragment.updateView();
+                String name = etName.getText().toString();
+                String phone = etPhone.getText().toString();
+                String addr = address.getText().toString();
+
+                Map<String, String> map = new HashMap<>();
+                map.put("img", CommonData.getCommonData().getUserInfo().imgUrl);
+                map.put("password", CommonData.getCommonData().getUserInfo().seller);
+                map.put("phone", phone);
+                map.put("address", addr);
+                map.put("name", name);
+                map.put("uid", CommonData.getCommonData().getUserInfo().uid);
+                MainManager.getInstance().getNetService().updateUserInfo(map)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<Boolean>() {
+                            @Override
+                            public void onCompleted() {
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Toast.makeText(fragment.getContext(), "网络不佳，请重试！", Toast.LENGTH_LONG).show();
+                            }
+
+                            @Override
+                            public void onNext(Boolean result) {
+                                if (result) {
+                                    data.title = name;
+                                    data.price = phone;
+                                    data.category = addr;
+                                    CommonData.getCommonData().setUserInfo(data);
+                                    fragment.updateView();
+                                    Toast.makeText(fragment.getContext(), "更新信息成功！", Toast.LENGTH_LONG).show();
+
+                                } else {
+                                    Toast.makeText(fragment.getContext(), "更新信息失败，请重试！", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+
                 dialog.dismiss();
             }
         });
@@ -155,14 +199,47 @@ public class CommonUtil {
         commit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                GoodData data = CommonData.getCommonData().getUserInfo();
                 String old = etName.getText().toString();
-                String new1  = etPhone.getText().toString();
-                String new2  = address.getText().toString();
-                if (TextUtils.isEmpty(old) || TextUtils.isEmpty(new1) || TextUtils.isEmpty(new2)){
+                String new1 = etPhone.getText().toString();
+                String new2 = address.getText().toString();
+                if (TextUtils.isEmpty(old) || TextUtils.isEmpty(new1) || TextUtils.isEmpty(new2)) {
                     Toast.makeText(context, "密码不能为空，请重新输入！", Toast.LENGTH_LONG).show();
-                }else if (!etPhone.getText().toString().equals(address.getText().toString())) {
+                } else if (!old.equals(data.seller)) {
+                    Toast.makeText(context, "当前密码不正确，请重新输入！", Toast.LENGTH_LONG).show();
+                } else if (!etPhone.getText().toString().equals(address.getText().toString())) {
                     Toast.makeText(context, "两次密码不相同，请重新输入！", Toast.LENGTH_LONG).show();
-                }else {
+                } else {
+                    Map<String, String> map = new HashMap<>();
+                    map.put("img", CommonData.getCommonData().getUserInfo().imgUrl);
+                    map.put("password", new1);
+                    map.put("phone", CommonData.getCommonData().getUserInfo().price);
+                    map.put("address", CommonData.getCommonData().getUserInfo().category);
+                    map.put("name", CommonData.getCommonData().getUserInfo().title);
+                    map.put("uid", CommonData.getCommonData().getUserInfo().uid);
+                    MainManager.getInstance().getNetService().updateUserInfo(map)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Observer<Boolean>() {
+                                @Override
+                                public void onCompleted() {
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    Toast.makeText(context, "网络不佳，请重试！", Toast.LENGTH_LONG).show();
+                                }
+
+                                @Override
+                                public void onNext(Boolean result) {
+                                    if (result) {
+                                        CommonData.getCommonData().getUserInfo().seller = new1;
+                                        Toast.makeText(context, "更新密码成功！", Toast.LENGTH_LONG).show();
+                                    } else {
+                                        Toast.makeText(context, "更新密码失败，请重试！", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
                     dialog.dismiss();
                 }
             }
@@ -181,25 +258,25 @@ public class CommonUtil {
     /**
      * 将图片转换成Base64编码的字符串
      */
-    public static String imageToBase64(String path){
-        if(TextUtils.isEmpty(path)){
+    public static String imageToBase64(String path) {
+        if (TextUtils.isEmpty(path)) {
             return null;
         }
         InputStream is = null;
         byte[] data = null;
         String result = null;
-        try{
+        try {
             is = new FileInputStream(path);
             //创建一个字符流大小的数组。
             data = new byte[is.available()];
             //写入数组
             is.read(data);
             //用默认的编码格式进行编码
-            result = Base64.encodeToString(data,Base64.DEFAULT);
-        }catch (Exception e){
+            result = Base64.encodeToString(data, Base64.DEFAULT);
+        } catch (Exception e) {
             e.printStackTrace();
-        }finally {
-            if(null !=is){
+        } finally {
+            if (null != is) {
                 try {
                     is.close();
                 } catch (IOException e) {
