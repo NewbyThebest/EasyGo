@@ -52,9 +52,9 @@ public class TabFragment extends BaseFragment {
             @Override
             public void onItemClick(GoodData data) {
                 if (CommonData.getCommonData().getUserType() == Constants.BUYER) {
-                    MainManager.getInstance().showBuyDialog(TabFragment.this, data, null);
+                    CommonUtil.showBuyDialog(TabFragment.this, data, null);
                 } else {
-                    MainManager.getInstance().showGoodsEditDialog(TabFragment.this,data);
+                    CommonUtil.showGoodsEditDialog(TabFragment.this,data);
                 }
             }
         });

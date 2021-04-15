@@ -10,6 +10,9 @@ public class GoodData implements Serializable {
         this.seller = seller;
         this.category = category;
     }
+    GoodData(){
+
+    }
     public String getTitle() {
         return title;
     }
@@ -57,5 +60,15 @@ public class GoodData implements Serializable {
     }
 
     String category;
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    String uid;
 
 }

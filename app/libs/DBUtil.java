@@ -12,7 +12,7 @@ import java.sql.*;
    private static Connection conn;
    //装载驱动
    static{
-     try{
+     try{的
        Class.forName(driverClass);
      }
      catch(ClassNotFoundException e){

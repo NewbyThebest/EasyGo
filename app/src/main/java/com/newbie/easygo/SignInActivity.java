@@ -16,6 +16,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 public class SignInActivity extends BaseActivity implements View.OnClickListener {
     private final static int BUYER = 0;
     private final static int SELLER = 1;
@@ -59,33 +66,55 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         });
     }
 
-    boolean checkUserInfo() {
-        boolean hasUser = false;
+    void checkUserInfo() {
         String etUser = user.getText().toString();
         String etPsw = password.getText().toString();
         if (TextUtils.isEmpty(etUser)) {
             Toast.makeText(this, "用户名不能为空，请重新输入！", Toast.LENGTH_LONG).show();
-            return false;
+            return;
         }
         if (TextUtils.isEmpty(etPsw)) {
             Toast.makeText(this, "密码不能为空，请重新输入！", Toast.LENGTH_LONG).show();
-            return false;
+            return;
         }
-        if (etUser.equals("1234")) {
-            hasUser = true;
-            Toast.makeText(this, "用户已存在，请重新输入！", Toast.LENGTH_LONG).show();
-        }
-        return !hasUser;
+
+        Map<String, String> map = new HashMap<>();
+        map.put("uid", etUser);
+        map.put("password", etPsw);
+        map.put("type", String.valueOf(type));
+
+        MainManager.getInstance().getNetService().addUserInfo(map)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(SignInActivity.this, "网络不佳，请重试！", Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onNext(Boolean result) {
+                        if (result) {
+                            finish();
+                            Toast.makeText(SignInActivity.this, "注册成功！", Toast.LENGTH_LONG).show();
+                            onBackPressed();
+                        } else {
+                            Toast.makeText(SignInActivity.this, "用户已存在，请重新输入！", Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                });
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.signin:
-                if (checkUserInfo()) {
-                    Toast.makeText(this, "注册成功！", Toast.LENGTH_LONG).show();
-                    onBackPressed();
-                }
+                checkUserInfo();
                 break;
             case R.id.back:
                 onBackPressed();

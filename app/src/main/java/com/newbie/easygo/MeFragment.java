@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,7 +20,13 @@ import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -106,7 +113,7 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.updateBtn:
-                MainManager.getInstance().showUserEditDialog(this, mData);
+                CommonUtil.showUserEditDialog(this, mData);
                 break;
             case R.id.photo:
                 PictureSelector.create(this)
@@ -115,7 +122,7 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
                         .forResult(PictureConfig.CHOOSE_REQUEST);
                 break;
             case R.id.updatePsw:
-                MainManager.getInstance().showPswEditDialog(getContext());
+                CommonUtil.showPswEditDialog(getContext());
                 break;
             case R.id.logout:
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
@@ -131,10 +138,65 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
         if (resultCode == RESULT_OK && requestCode == PictureConfig.CHOOSE_REQUEST) {
             List<LocalMedia> list = PictureSelector.obtainMultipleResult(data);
             if (list != null && !list.isEmpty()) {
-                mData.setImgUrl(list.get(0).getPath());
-                GlideEngine.getInstance().loadImage(getContext(), list.get(0).getPath(), photo);
+                LocalMedia media = list.get(0);
+                mData.setImgUrl(media.getPath());
+                uploadImg(media.getPath());
             }
         }
+    }
+
+    void uploadImg(String path){
+        String img = CommonUtil.imageToBase64(path);
+        Map<String, String> map = new HashMap<>();
+        map.put("img", img);
+        MainManager.getInstance().getNetService().uploadImg(map)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(getContext(), "网络不佳，请重试！", Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onNext(String result) {
+                        if (!TextUtils.isEmpty(result)) {
+                            updateUserInfo(result);
+                        }
+                    }
+                });
+    }
+
+    void updateUserInfo(String url){
+        Map<String, String> map = new HashMap<>();
+        map.put("img", url);
+        map.put("uid", CommonData.getCommonData().getUserInfo().uid);
+        MainManager.getInstance().getNetService().updateUserInfo(map)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(getContext(), "网络不佳，请重试！", Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onNext(String result) {
+                        if (!TextUtils.isEmpty(result)) {
+                            GlideEngine.getInstance().loadImage(getContext(), result, photo);
+                        }else {
+                            Toast.makeText(getContext(), "更新头像失败，请重试！", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
     }
 
 }

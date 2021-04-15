@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!--文档：
+    网络安全配置 - https://developer.android.com/training/articles/security-config?hl=zh-cn#TrustingDebugCa
+    明文通信 - https://developer.android.com/training/articles/security-config?hl=zh-cn#CleartextTrafficPermitted
+    参考中文 - https://www.jianshu.com/p/fda1e9d5e093
+    -->
+    <!--TargetSDK24以上配置，默认只信任系统证书/允许明文通信（用户不可抓包/允许http请求）-->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <!--信任系统证书-->
+            <certificates src="system" />
+            <!--信任用户证书-->
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+
+    <!--&lt;!&ndash;debugEnable = true 时，使用下面的配置（release/debug包）&ndash;&gt;-->
+    <!--<debug-overrides>-->
+        <!--<trust-anchors>-->
+            <!--&lt;!&ndash;信任系统&ndash;&gt;-->
+            <!--<certificates src="system" />-->
+            <!--&lt;!&ndash;信任用户&ndash;&gt;-->
+            <!--<certificates src="user" />-->
+        <!--</trust-anchors>-->
+    <!--</debug-overrides>-->
+
+
+</network-security-config>

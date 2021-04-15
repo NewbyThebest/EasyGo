@@ -85,7 +85,7 @@ public class MainFragment extends BaseFragment {
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MainManager.getInstance().showGoodsEditDialog(MainFragment.this, null);
+                    CommonUtil.showGoodsEditDialog(MainFragment.this, null);
                 }
             });
         }
@@ -164,9 +164,9 @@ public class MainFragment extends BaseFragment {
                 @Override
                 public void onClick(View v) {
                     if (CommonData.getCommonData().getUserType() == Constants.SELLER){
-                        MainManager.getInstance().showGoodsEditDialog(MainFragment.this, data);
+                        CommonUtil.showGoodsEditDialog(MainFragment.this, data);
                     }else {
-                        MainManager.getInstance().showBuyDialog(MainFragment.this,data,null);
+                        CommonUtil.showBuyDialog(MainFragment.this,data,null);
                     }
                 }
             });

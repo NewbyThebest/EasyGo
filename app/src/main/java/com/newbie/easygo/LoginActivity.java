@@ -21,6 +21,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import rx.Observable;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 import static com.newbie.easygo.Constants.BUYER;
 import static com.newbie.easygo.Constants.SELLER;
 
@@ -43,7 +51,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        MainManager.getInstance().initRetrofit();
         login = findViewById(R.id.login);
         user = findViewById(R.id.username);
         password = findViewById(R.id.password);
@@ -72,44 +79,56 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         });
     }
 
-    boolean checkUserInfo() {
-        boolean hasUser = false;
-        boolean correctPsw = false;
+    void checkUserInfo() {
         String etUser = user.getText().toString();
         String etPsw = password.getText().toString();
         if (TextUtils.isEmpty(etUser)) {
             Toast.makeText(this, "用户名不能为空，请重新输入！", Toast.LENGTH_LONG).show();
-            return false;
+            return;
         }
         if (TextUtils.isEmpty(etPsw)) {
             Toast.makeText(this, "密码不能为空，请重新输入！", Toast.LENGTH_LONG).show();
-            return false;
+            return;
         }
-        if (etUser.equals("1234")) {
-            hasUser = true;
-        } else {
-            Toast.makeText(this, "用户不存在，请重新输入！", Toast.LENGTH_LONG).show();
-        }
-        if (etPsw.equals("1234")) {
-            correctPsw = true;
-        } else {
-            if (hasUser) {
-                Toast.makeText(this, "密码不正确，请重新输入！", Toast.LENGTH_LONG).show();
-            }
-        }
-        return hasUser && correctPsw;
+
+        Map<String, String> map = new HashMap<>();
+        map.put("uid", etUser);
+        map.put("password", etPsw);
+        map.put("type", String.valueOf(type));
+        MainManager.getInstance().getNetService().checkUserInfo(map)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<GoodData>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(LoginActivity.this, "网络不佳，请重试！", Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onNext(GoodData result) {
+                        if (result != null && !TextUtils.isEmpty(result.getUid())) {
+                            CommonData.getCommonData().setUserType(type);
+                            CommonData.getCommonData().setUserInfo(result);
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(LoginActivity.this, "账号或密码错误，请重新输入！", Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                });
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.login:
-                if (checkUserInfo()) {
-                    CommonData.getCommonData().setUserType(type);
-                    Intent intent = new Intent(this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
+                checkUserInfo();
                 break;
             case R.id.eye:
                 isOpen = !isOpen;
@@ -119,7 +138,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 } else {
                     eye.setBackgroundResource(R.drawable.ic_eye_close);
                     password.setTransformationMethod(PasswordTransformationMethod.getInstance());
-
                 }
                 password.setSelection(password.getText().toString().length());
                 break;
