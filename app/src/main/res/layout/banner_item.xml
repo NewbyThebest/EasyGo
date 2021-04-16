@@ -8,6 +8,7 @@
         app:riv_corner_radius="4dp"
         android:scaleType="centerCrop"
         android:id="@+id/banner_image"
+        android:src="@drawable/bg_default"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

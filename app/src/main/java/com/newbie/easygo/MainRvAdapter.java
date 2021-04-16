@@ -25,6 +25,10 @@ public class MainRvAdapter extends RecyclerView.Adapter<MainRvAdapter.MyHolder> 
         mIsShowBtn = isShowBtn;
     }
 
+    public void setList(List<GoodData> mList) {
+        this.mList = mList;
+    }
+
     public interface OnItemClickListener{
         public void onItemClick(GoodData data);
     }
@@ -87,6 +91,7 @@ public class MainRvAdapter extends RecyclerView.Adapter<MainRvAdapter.MyHolder> 
     public int getItemCount() {
         return mList.size();
     }
+
 
     /**
      * 自定义的ViewHolder

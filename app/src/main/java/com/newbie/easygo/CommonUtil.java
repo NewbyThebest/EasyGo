@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,7 +53,9 @@ public class CommonUtil {
             etName.setText(data.title);
             etPhone.setText(data.price);
             address.setText(data.category);
-            Glide.with(fragment.getContext()).load(data.imgUrl).into(ivImg);
+            if (!TextUtils.isEmpty(data.imgUrl)){
+                Glide.with(fragment.getContext()).load(data.imgUrl).into(ivImg);
+            }
         }
         builder.setView(view);
         AlertDialog dialog = builder.create();
@@ -81,6 +85,7 @@ public class CommonUtil {
 
                             @Override
                             public void onError(Throwable e) {
+                                e.printStackTrace();
                                 Toast.makeText(fragment.getContext(), "网络不佳，请重试！", Toast.LENGTH_LONG).show();
                             }
 
@@ -134,20 +139,21 @@ public class CommonUtil {
         TextView seller = view.findViewById(R.id.seller);
         ImageView img = view.findViewById(R.id.img);
         TextView category = view.findViewById(R.id.tv_category);
+        TextView emptyView = view.findViewById(R.id.empty_view);
         ViewGroup layout = view.findViewById(R.id.layout);
         builder.setView(view);
         AlertDialog dialog = builder.create();
         Window window = dialog.getWindow();
         window.setBackgroundDrawableResource(R.drawable.dialog_bg);
-        if (userData != null) {
-            user.setText(userData.title);
-            phone.setText(userData.price);
-            address.setText(userData.category);
-        } else {
+        user.setText(userData.title);
+        phone.setText(userData.price);
+        address.setText(userData.category);
+        if (TextUtils.isEmpty(userData.title)){
+            emptyView.setVisibility(View.VISIBLE);
             layout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    CommonUtil.showUserEditDialog(fragment, null);
+                    CommonUtil.showUserEditDialog(fragment, userData);
                     dialog.dismiss();
                 }
             });
@@ -163,12 +169,42 @@ public class CommonUtil {
         commit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (userData == null || TextUtils.isEmpty(userData.title)
-                        || TextUtils.isEmpty(userData.price)
-                        || TextUtils.isEmpty(userData.category)) {
+                if (TextUtils.isEmpty(userData.title) || TextUtils.isEmpty(userData.price) || TextUtils.isEmpty(userData.category)) {
                     Toast.makeText(fragment.getActivity(), "请先完善个人信息！", Toast.LENGTH_LONG).show();
-                    CommonUtil.showUserEditDialog(fragment, null);
+                    CommonUtil.showUserEditDialog(fragment, userData);
                     dialog.dismiss();
+                }else {
+                    HashMap<String, String> map = new HashMap<String, String>();
+                    map.put("uid", goodData.uid);
+                    map.put("img",goodData.imgUrl);
+                    map.put("title", goodData.title);
+                    map.put("price", goodData.price);
+                    map.put("category", goodData.category);
+                    map.put("buyerId", CommonData.getCommonData().getUserInfo().uid);
+                    MainManager.getInstance().getNetService().updateGoods(map)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Observer<Boolean>() {
+                                @Override
+                                public void onCompleted() {
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    Toast.makeText(fragment.getContext(), "网络不佳，请重试！", Toast.LENGTH_LONG).show();
+                                }
+
+                                @Override
+                                public void onNext(Boolean result) {
+                                    if (result) {
+                                        Toast.makeText(fragment.getContext(), "购买商品成功！", Toast.LENGTH_LONG).show();
+                                        EventBus.getDefault().post(new UpdateGoodsEvent());
+                                        dialog.dismiss();
+                                    } else {
+                                        Toast.makeText(fragment.getContext(), "购买商品失败，请重试！", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
                 }
                 dialog.dismiss();
             }

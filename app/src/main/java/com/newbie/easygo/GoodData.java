@@ -16,6 +16,9 @@ public class GoodData implements Serializable {
     //address
     String category= "";
 
+    String sellerId = "";
+    String buyerId = "";
+
 
     GoodData(String title,String price,String url,String seller,String category){
         this.title = title;
@@ -26,6 +29,22 @@ public class GoodData implements Serializable {
     }
     GoodData(){
 
+    }
+
+    public String getSellerId() {
+        return sellerId;
+    }
+
+    public void setSellerId(String sellerId) {
+        this.sellerId = sellerId;
+    }
+
+    public String getBuyerId() {
+        return buyerId;
+    }
+
+    public void setBuyerId(String buyerId) {
+        this.buyerId = buyerId;
     }
     public String getTitle() {
         return title;
@@ -68,8 +87,6 @@ public class GoodData implements Serializable {
     public void setCategory(String category) {
         this.category = category;
     }
-
-
 
     public String getUid() {
         return uid;

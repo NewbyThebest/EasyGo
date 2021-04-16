@@ -1,11 +1,13 @@
 package com.newbie.easygo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class CommonData {
     private String[] tabs = {"安卓手机", "苹果手机", "台式电脑", "笔记本", "平板", "照相机"};
 
     private int userType;
     private static CommonData mCommonData;
-
 
     private GoodData mUserInfo = new GoodData();
 

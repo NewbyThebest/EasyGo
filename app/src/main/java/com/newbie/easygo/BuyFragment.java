@@ -4,7 +4,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,14 +14,23 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class BuyFragment extends BaseFragment {
     private RecyclerView recyclerView;
     private MainRvAdapter mainRvAdapter;
     private List<GoodData> mList = new ArrayList<>();
-
+    private ImageView mEmptyView;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,20 +45,107 @@ public class BuyFragment extends BaseFragment {
         return root;
     }
 
+
+
     void initData() {
-        mList.clear();
-        for (int i = 0; i < 10; i++) {
-            String title = "测试数据" + i;
-            String price = "" + (i * i);
-            String seller = "张三";
-            String category = "安卓手机";
-            String url = "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fpicture.ik123.com%2Fuploads%2Fallimg%2F161203%2F3-1612030ZG5.jpg&refer=http%3A%2F%2Fpicture.ik123.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1620888901&t=01c32eff8a057c03ef89b029b6aaa3f5";
-            mList.add(new GoodData(title, price, url, seller, category));
+        Map<String, String> map = new HashMap<>();
+        if (CommonData.getCommonData().getUserType() == Constants.SELLER){
+            map.put("sellerId", CommonData.getCommonData().getUserInfo().uid);
+            MainManager.getInstance().getNetService().querySellerGoods(map)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<List<GoodData>>() {
+                        @Override
+                        public void onCompleted() {
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            if (getActivity() != null) {
+                                Toast.makeText(getActivity(), "网络不佳，请重试！", Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                        @Override
+                        public void onNext(List<GoodData> datas) {
+                            mList.clear();
+                            if (datas != null && !datas.isEmpty()) {
+                                mList.addAll(datas);
+                                if (mEmptyView != null) {
+                                    mEmptyView.setVisibility(View.GONE);
+                                }
+                            } else {
+                                if (mEmptyView != null) {
+                                    mEmptyView.setVisibility(View.VISIBLE);
+                                }
+
+                            }
+                            if (mainRvAdapter != null){
+                                mainRvAdapter.setList(mList);
+                                mainRvAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    });
+        }else {
+            map.put("buyerId", CommonData.getCommonData().getUserInfo().uid);
+            MainManager.getInstance().getNetService().queryBuyerGoods(map)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<List<GoodData>>() {
+                        @Override
+                        public void onCompleted() {
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            if (getActivity() != null) {
+                                Toast.makeText(getActivity(), "网络不佳，请重试！", Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                        @Override
+                        public void onNext(List<GoodData> datas) {
+                            mList.clear();
+                            if (datas != null && !datas.isEmpty()) {
+                                mList.addAll(datas);
+                                if (mEmptyView != null) {
+                                    mEmptyView.setVisibility(View.GONE);
+                                }
+                            } else {
+                                if (mEmptyView != null) {
+                                    mEmptyView.setVisibility(View.VISIBLE);
+                                }
+
+                            }
+                            if (mainRvAdapter != null){
+                                mainRvAdapter.setList(mList);
+                                mainRvAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    });
         }
+
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(UpdateGoodsEvent event) {
+        updateView();
+    }
+
+    @Override
+    public void updateView() {
+        initData();
     }
 
     void initView(View root) {
         recyclerView = root.findViewById(R.id.buy_rv);
+        mEmptyView = root.findViewById(R.id.empty_view);
+        if (mList.isEmpty()){
+            mEmptyView.setVisibility(View.VISIBLE);
+        }else {
+            mEmptyView.setVisibility(View.GONE);
+        }
         mainRvAdapter = new MainRvAdapter(mList, false);
         if (CommonData.getCommonData().getUserType() == Constants.SELLER) {
             TextView title = root.findViewById(R.id.title);

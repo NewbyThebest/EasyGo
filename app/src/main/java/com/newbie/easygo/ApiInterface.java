@@ -1,5 +1,6 @@
 package com.newbie.easygo;
 
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.http.FieldMap;
@@ -26,23 +27,27 @@ public interface ApiInterface {
 
     @FormUrlEncoded
     @POST("queryCategoryGoods")
-    Observable<String> queryCategoryGoods(@FieldMap Map<String,  String> map);
+    Observable<List<GoodData>> queryCategoryGoods(@FieldMap Map<String,  String> map);
 
     @FormUrlEncoded
     @POST("queryBuyerGoods")
-    Observable<String> queryBuyerGoods(@FieldMap Map<String,  String> map);
+    Observable<List<GoodData>> queryBuyerGoods(@FieldMap Map<String,  String> map);
 
     @FormUrlEncoded
     @POST("querySellerGoods")
-    Observable<String> querySellerGoods(@FieldMap Map<String,  String> map);
+    Observable<List<GoodData>> querySellerGoods(@FieldMap Map<String,  String> map);
 
     @FormUrlEncoded
-    @POST("addGoods")
-    Observable<String> addGoods(@FieldMap Map<String,  String> map);
+    @POST("queryBannerGoods")
+    Observable<List<GoodData>> queryBannerGoods(@FieldMap Map<String,  String> map);
 
     @FormUrlEncoded
-    @POST("updateGoods")
-    Observable<String> updateGoods(@FieldMap Map<String,  String> map);
+    @POST("addGoodsInfo")
+    Observable<Boolean> addGoods(@FieldMap Map<String,  String> map);
+
+    @FormUrlEncoded
+    @POST("updateGoodsInfo")
+    Observable<Boolean> updateGoods(@FieldMap Map<String,  String> map);
 
     @FormUrlEncoded
     @POST("deleteGoods")

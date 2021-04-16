@@ -3,6 +3,7 @@ package com.newbie.easygo;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,7 +35,14 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.lang.invoke.ConstantCallSite;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class MainFragment extends BaseFragment {
 
@@ -58,15 +67,45 @@ public class MainFragment extends BaseFragment {
     }
 
     void initData() {
-        mBanners.clear();
-        for (int i = 0; i < 3; i++) {
-            String title = "测试数据" + i;
-            String price = "" + (i * i);
-            String seller = "张三";
-            String category = "安卓手机";
-            String url = "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fpicture.ik123.com%2Fuploads%2Fallimg%2F161203%2F3-1612030ZG5.jpg&refer=http%3A%2F%2Fpicture.ik123.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1620888901&t=01c32eff8a057c03ef89b029b6aaa3f5";
-            mBanners.add(new GoodData(title, price, url, seller, category));
-        }
+        mBanners.add(new GoodData());
+        mBanners.add(new GoodData());
+        mBanners.add(new GoodData());
+        Map<String, String> map = new HashMap<>();
+        MainManager.getInstance().getNetService().queryBannerGoods(map)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<List<GoodData>>() {
+                        @Override
+                        public void onCompleted() {
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            if (getActivity() != null) {
+                                Toast.makeText(getActivity(), "网络不佳，请重试！", Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                        @Override
+                        public void onNext(List<GoodData> datas) {
+                            mBanners.clear();
+                            if (datas != null && !datas.isEmpty()) {
+                                for (int i = 0; i < 3; i++) {
+                                    int size = datas.size();
+                                    Random random = new Random();
+                                    int pos = random.nextInt(size);
+                                    mBanners.add(datas.get(pos));
+                                }
+                                // 设置数据
+                                mMZBanner.setPages(mBanners, new MZHolderCreator<MainFragment.BannerViewHolder>() {
+                                    @Override
+                                    public MainFragment.BannerViewHolder createViewHolder() {
+                                        return new MainFragment.BannerViewHolder();
+                                    }
+                                });
+                            }
+                        }
+                    });
     }
 
     @Override
@@ -85,7 +124,11 @@ public class MainFragment extends BaseFragment {
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    CommonUtil.showGoodsEditDialog(MainFragment.this, null);
+                    if (TextUtils.isEmpty(CommonData.getCommonData().getUserInfo().title)) {
+                        CommonUtil.showUserEditDialog(MainFragment.this, CommonData.getCommonData().getUserInfo());
+                    } else {
+                        CommonUtil.showGoodsEditDialog(MainFragment.this, null);
+                    }
                 }
             });
         }
@@ -136,8 +179,10 @@ public class MainFragment extends BaseFragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(UpdateGoodsEvent event){
-        fragmentPagerAdapter.notifyDataSetChanged();
+    public void onEvent(UpdateGoodsEvent event) {
+        for (BaseFragment fragment : tabFragmentList) {
+            fragment.updateView();
+        }
     }
 
     @Override
@@ -163,15 +208,19 @@ public class MainFragment extends BaseFragment {
             mImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (CommonData.getCommonData().getUserType() == Constants.SELLER){
+                    if (CommonData.getCommonData().getUserType() == Constants.SELLER) {
                         CommonUtil.showGoodsEditDialog(MainFragment.this, data);
-                    }else {
-                        CommonUtil.showBuyDialog(MainFragment.this,data,null);
+                    } else {
+                        CommonUtil.showBuyDialog(MainFragment.this, data, CommonData.getCommonData().getUserInfo());
                     }
                 }
             });
-            Glide.with(mImageView.getContext()).load(data.imgUrl).into(mImageView);
+            if (!TextUtils.isEmpty(data.imgUrl)) {
+                Glide.with(mImageView.getContext()).load(data.imgUrl).into(mImageView);
+            }
         }
+
+
     }
 
 
