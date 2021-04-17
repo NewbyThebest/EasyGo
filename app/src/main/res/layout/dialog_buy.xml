@@ -98,9 +98,9 @@
                 android:layout_height="84dp"
                 android:layout_marginTop="16dp"
                 android:scaleType="centerCrop"
-                android:src="@mipmap/ic_launcher_round"
+                android:src="@drawable/bg_default"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/line"
+                app:layout_constraintTop_toTopOf="parent"
                 app:riv_corner_radius="4dp" />
 
             <TextView

@@ -1,4 +1,4 @@
-package com.newbie.easygo;
+package com.newbie.easygo.main;
 
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +10,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import com.gyf.immersionbar.ImmersionBar;
+import com.newbie.easygo.login.MainFragment;
+import com.newbie.easygo.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         initView();
         initClickListener();
     }
+
 
     private void initView() {
 

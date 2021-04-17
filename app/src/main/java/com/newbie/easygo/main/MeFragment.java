@@ -1,4 +1,4 @@
-package com.newbie.easygo;
+package com.newbie.easygo.main;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,6 +19,15 @@ import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
+import com.newbie.easygo.R;
+import com.newbie.easygo.common.BaseFragment;
+import com.newbie.easygo.common.CommonData;
+import com.newbie.easygo.common.CommonUtil;
+import com.newbie.easygo.common.Constants;
+import com.newbie.easygo.common.GlideEngine;
+import com.newbie.easygo.common.GoodData;
+import com.newbie.easygo.common.MainManager;
+import com.newbie.easygo.login.LoginActivity;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,8 +38,11 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 import static android.app.Activity.RESULT_OK;
-import static com.newbie.easygo.Constants.BASE_IP;
+import static com.newbie.easygo.common.Constants.BASE_IP;
 
+/**
+ * 个人信息的界面
+ */
 public class MeFragment extends BaseFragment implements View.OnClickListener {
     private ImageView photo;
     private TextView userName;
@@ -94,6 +106,9 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
         logout.setOnClickListener(this);
     }
 
+    /**
+     * 更新界面
+     */
     @Override
     public void updateView() {
         super.updateView();
@@ -111,19 +126,35 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            /**
+             * 点击更新按钮
+             */
             case R.id.updateBtn:
                 CommonUtil.showUserEditDialog(this, mData);
                 break;
+
+            /**
+             * 点击头像
+             */
             case R.id.photo:
                 PictureSelector.create(this)
                         .openGallery(PictureMimeType.ofImage())
                         .imageEngine(new GlideEngine())
                         .forResult(PictureConfig.CHOOSE_REQUEST);
                 break;
+
+            /**
+             * 点击更新密码
+             */
             case R.id.updatePsw:
                 CommonUtil.showPswEditDialog(getContext());
                 break;
+
+            /**
+             * 登出账号
+             */
             case R.id.logout:
+                CommonData.getCommonData().setUserInfo(new GoodData());
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
                 startActivity(intent);
                 getActivity().finish();
@@ -144,6 +175,10 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
         }
     }
 
+    /**
+     * 上传头像
+     * @param path
+     */
     void uploadImg(String path){
         String img = CommonUtil.imageToBase64(path);
         Map<String, String> map = new HashMap<>();
@@ -170,6 +205,10 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
                 });
     }
 
+    /**
+     * 更新用户信息
+     * @param name
+     */
     void updateUserInfo(String name){
         Map<String, String> map = new HashMap<>();
         String url = "http://" + BASE_IP + "/EasyGo/img/" + name;

@@ -1,4 +1,4 @@
-package com.newbie.easygo;
+package com.newbie.easygo.common;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,13 +9,12 @@ import androidx.fragment.app.Fragment;
 import com.gyf.immersionbar.ImmersionBar;
 import com.gyf.immersionbar.components.SimpleImmersionFragment;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.List;
 
 public class BaseFragment extends SimpleImmersionFragment {
     @Override
     public void initImmersionBar() {
+        //沉浸式状态栏
         ImmersionBar.with(this).statusBarDarkFont(true).fitsSystemWindows(true).init();
     }
 

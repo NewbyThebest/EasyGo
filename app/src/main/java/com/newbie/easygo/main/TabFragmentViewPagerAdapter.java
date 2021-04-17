@@ -1,4 +1,4 @@
-package com.newbie.easygo;
+package com.newbie.easygo.main;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;

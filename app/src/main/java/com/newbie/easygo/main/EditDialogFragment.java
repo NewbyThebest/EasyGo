@@ -1,7 +1,5 @@
-package com.newbie.easygo;
+package com.newbie.easygo.main;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -26,6 +24,13 @@ import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
+import com.newbie.easygo.common.GlideEngine;
+import com.newbie.easygo.common.MainManager;
+import com.newbie.easygo.R;
+import com.newbie.easygo.common.UpdateGoodsEvent;
+import com.newbie.easygo.common.CommonData;
+import com.newbie.easygo.common.CommonUtil;
+import com.newbie.easygo.common.GoodData;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -38,7 +43,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 import static android.app.Activity.RESULT_OK;
-import static com.newbie.easygo.Constants.BASE_IP;
+import static com.newbie.easygo.common.Constants.BASE_IP;
 
 public class EditDialogFragment extends DialogFragment {
     private GoodData goodData;
@@ -86,6 +91,8 @@ public class EditDialogFragment extends DialogFragment {
             mImgPath = goodData.imgUrl;
             mImgTemp = mImgPath;
             Glide.with(this).load(mImgPath).into(imageView);
+        }else {
+            delete.setVisibility(View.GONE);
         }
         mCategory = tabs[position];
 
@@ -138,8 +145,7 @@ public class EditDialogFragment extends DialogFragment {
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EventBus.getDefault().post(new UpdateGoodsEvent());
-                getDialog().dismiss();
+                deleteGoodsInfo();
             }
         });
 
@@ -211,6 +217,35 @@ public class EditDialogFragment extends DialogFragment {
                 });
     }
 
+    void deleteGoodsInfo(){
+        Map<String, String> map = new HashMap<>();
+        map.put("uid", goodData.uid);
+        MainManager.getInstance().getNetService().deleteGoods(map)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(getContext(), "网络不佳，请重试！", Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onNext(Boolean result) {
+                        if (result) {
+                            Toast.makeText(getContext(), "删除商品成功！", Toast.LENGTH_LONG).show();
+                            EventBus.getDefault().post(new UpdateGoodsEvent());
+                            getDialog().dismiss();
+                        } else {
+                            Toast.makeText(getContext(), "删除商品失败，请重试！", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+    }
+
     void updateGoodsInfo(String name) {
         Map<String, String> map = new HashMap<>();
         if (!TextUtils.isEmpty(name)) {
@@ -250,6 +285,11 @@ public class EditDialogFragment extends DialogFragment {
                 });
     }
 
+
+    /**
+     * 添加商品信息
+     * @param name
+     */
     void addGoodsInfo(String name) {
         Map<String, String> map = new HashMap<>();
         String url = "http://" + BASE_IP + "/EasyGo/img/" + name;

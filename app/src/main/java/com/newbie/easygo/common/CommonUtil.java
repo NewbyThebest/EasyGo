@@ -1,4 +1,4 @@
-package com.newbie.easygo;
+package com.newbie.easygo.common;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -16,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.newbie.easygo.main.EditDialogFragment;
+import com.newbie.easygo.R;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -29,9 +31,13 @@ import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-import static com.newbie.easygo.Constants.BASE_IP;
-
 public class CommonUtil {
+
+    /**
+     * 显示商品编辑弹窗
+     * @param fragment
+     * @param data
+     */
     public static void showGoodsEditDialog(BaseFragment fragment, GoodData data) {
         EditDialogFragment dialogFragment = new EditDialogFragment();
         Bundle bundle = new Bundle();
@@ -40,6 +46,11 @@ public class CommonUtil {
         dialogFragment.show(fragment.getChildFragmentManager(), "edit");
     }
 
+    /**
+     * 显示用户信息界面弹窗
+     * @param fragment
+     * @param data
+     */
     public static void showUserEditDialog(BaseFragment fragment, GoodData data) {
         AlertDialog.Builder builder = new AlertDialog.Builder(fragment.getActivity());
         View view = LayoutInflater.from(fragment.getActivity()).inflate(R.layout.dialog_user_edit, null, false);
@@ -49,6 +60,10 @@ public class CommonUtil {
         EditText address = view.findViewById(R.id.et_address);
         Button commit = view.findViewById(R.id.commit);
         Button close = view.findViewById(R.id.close);
+        TextView tv_address = view.findViewById(R.id.tv_address);
+        if (CommonData.getCommonData().getUserType() == Constants.SELLER){
+            tv_address.setText("商家地址：");
+        }
         if (data != null) {
             etName.setText(data.title);
             etPhone.setText(data.price);
@@ -126,6 +141,12 @@ public class CommonUtil {
         dialog.show();
     }
 
+    /**
+     * 显示购买弹窗
+     * @param fragment
+     * @param goodData
+     * @param userData
+     */
     public static void showBuyDialog(BaseFragment fragment, GoodData goodData, GoodData userData) {
         AlertDialog.Builder builder = new AlertDialog.Builder(fragment.getActivity());
         View view = LayoutInflater.from(fragment.getActivity()).inflate(R.layout.dialog_buy, null, false);
@@ -220,6 +241,10 @@ public class CommonUtil {
         dialog.show();
     }
 
+    /**
+     * 显示密码修改弹窗
+     * @param context
+     */
     public static void showPswEditDialog(Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_psw_edit, null, false);

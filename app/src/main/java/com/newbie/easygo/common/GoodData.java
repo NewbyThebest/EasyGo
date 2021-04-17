@@ -1,23 +1,50 @@
-package com.newbie.easygo;
+package com.newbie.easygo.common;
 
 import java.io.Serializable;
 
+/**
+ * 数据bean，用户信息和商品信息都用这个
+ */
 public class GoodData implements Serializable {
 
-    String uid = "";
-    //name
-    String title = "";
-    //phone
-    String price = "";
-    //photo
-    String imgUrl= "";
-    //password
-    String seller= "";
-    //address
-    String category= "";
+    /**
+     * 用户或商品id
+     */
+    public String uid = "";
+    /**
+     * 用户名称或商品标题
+     */
+    public String title = "";
 
-    String sellerId = "";
-    String buyerId = "";
+    /**
+     * 手机号码或者商品价格
+     */
+    public String price = "";
+
+    /**
+     * 用户头像或商品预览图
+     */
+    public String imgUrl= "";
+
+    /**
+     * 用户面或者卖家名称
+     */
+    public String seller= "";
+
+    /**
+     * 用户地址或者商家地址
+     */
+    public String category= "";
+
+    /**
+     * 商家id
+     */
+    public String sellerId = "";
+
+    /**
+     * 购买者id
+     */
+    public String buyerId = "";
 
 
     GoodData(String title,String price,String url,String seller,String category){
@@ -27,7 +54,7 @@ public class GoodData implements Serializable {
         this.seller = seller;
         this.category = category;
     }
-    GoodData(){
+    public GoodData(){
 
     }
 

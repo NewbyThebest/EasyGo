@@ -6,6 +6,7 @@
     android:padding = "16dp">
 
     <TextView
+        android:layout_marginTop="32dp"
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -66,7 +67,7 @@
         android:layout_height="84dp"
         app:riv_corner_radius="4dp"
         android:scaleType="centerCrop"
-        android:src="@mipmap/ic_launcher"
+        android:src="@drawable/bg_default"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tv_img"
         app:layout_constraintTop_toTopOf="@id/tv_img" />

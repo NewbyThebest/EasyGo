@@ -1,17 +1,14 @@
-package com.newbie.easygo;
+package com.newbie.easygo.login;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.ParcelUuid;
-import android.text.InputType;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -21,23 +18,30 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
+
+import com.newbie.easygo.common.MainManager;
+import com.newbie.easygo.R;
+import com.newbie.easygo.common.BaseActivity;
+import com.newbie.easygo.common.CommonData;
+import com.newbie.easygo.common.Constants;
+import com.newbie.easygo.common.GoodData;
+import com.newbie.easygo.main.MainActivity;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-import static com.newbie.easygo.Constants.BUYER;
-import static com.newbie.easygo.Constants.SELLER;
+import static com.newbie.easygo.common.Constants.BUYER;
+import static com.newbie.easygo.common.Constants.SELLER;
 
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
     public final static int REQUEST_CODE = 1024;
+
     private Button login;
     private EditText user;
     private EditText password;
@@ -83,6 +87,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         });
     }
 
+    /**
+     * 判断用户登陆是否正确
+     */
     void checkUserInfo() {
         String etUser = user.getText().toString();
         String etPsw = password.getText().toString();
@@ -131,9 +138,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            /**
+             * 点击登陆
+             */
             case R.id.login:
                 checkUserInfo();
                 break;
+
+            /**
+             * 点击显示密码
+             */
             case R.id.eye:
                 isOpen = !isOpen;
                 if (isOpen) {
@@ -145,12 +159,18 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 }
                 password.setSelection(password.getText().toString().length());
                 break;
+            /**
+             * 点击注册
+             */
             case R.id.sign:
                 Intent intent = new Intent(this, SignInActivity.class);
                 intent.putExtra("USER_TYPE", type);
                 startActivityForResult(intent, REQUEST_CODE);
                 break;
 
+            /**
+             * 点击忘记密码
+             */
             case R.id.forget:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("请联系作者寻求帮助\nqq:123456789");
@@ -158,6 +178,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 Dialog dialog = builder.create();
                 dialog.show();
                 break;
+
+            /**
+             * 点击标题
+             */
             case R.id.userType:
                 count++;
                 if (count == 3){

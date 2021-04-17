@@ -1,4 +1,4 @@
-package com.newbie.easygo;
+package com.newbie.easygo.main;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,10 +10,18 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.newbie.easygo.common.CommonData;
+import com.newbie.easygo.common.Constants;
+import com.newbie.easygo.common.GoodData;
+import com.newbie.easygo.common.MainManager;
+import com.newbie.easygo.R;
+import com.newbie.easygo.common.UpdateGoodsEvent;
+import com.newbie.easygo.common.BaseFragment;
+
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -26,6 +34,9 @@ import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
+/**
+ * 售出界面或者购买界面
+ */
 public class BuyFragment extends BaseFragment {
     private RecyclerView recyclerView;
     private MainRvAdapter mainRvAdapter;
@@ -34,6 +45,7 @@ public class BuyFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
         initData();
     }
 
@@ -46,7 +58,9 @@ public class BuyFragment extends BaseFragment {
     }
 
 
-
+    /**
+     * 从服务器请求购买记录或者售出记录
+     */
     void initData() {
         Map<String, String> map = new HashMap<>();
         if (CommonData.getCommonData().getUserType() == Constants.SELLER){
@@ -138,6 +152,10 @@ public class BuyFragment extends BaseFragment {
         initData();
     }
 
+    /**
+     * 初始化界面
+     * @param root
+     */
     void initView(View root) {
         recyclerView = root.findViewById(R.id.buy_rv);
         mEmptyView = root.findViewById(R.id.empty_view);
@@ -149,7 +167,7 @@ public class BuyFragment extends BaseFragment {
         mainRvAdapter = new MainRvAdapter(mList, false);
         if (CommonData.getCommonData().getUserType() == Constants.SELLER) {
             TextView title = root.findViewById(R.id.title);
-            title.setText("出售记录");
+            title.setText("售出记录");
         }
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);

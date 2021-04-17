@@ -1,9 +1,8 @@
-package com.newbie.easygo;
+package com.newbie.easygo.main;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,12 +10,16 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.newbie.easygo.R;
+import com.newbie.easygo.common.CommonData;
+import com.newbie.easygo.common.Constants;
+import com.newbie.easygo.common.GoodData;
 
 import java.util.List;
 
 public class MainRvAdapter extends RecyclerView.Adapter<MainRvAdapter.MyHolder> {
 
-    private List<GoodData> mList;//数据源
+    private List<GoodData> mList;
     private OnItemClickListener mOnItemClickListener;
     private boolean mIsShowBtn;
 

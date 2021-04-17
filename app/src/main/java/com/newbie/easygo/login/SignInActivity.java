@@ -1,10 +1,8 @@
-package com.newbie.easygo;
+package com.newbie.easygo.login;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.text.method.HideReturnsTransformationMethod;
-import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -13,8 +11,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
+
+import com.newbie.easygo.R;
+import com.newbie.easygo.common.BaseActivity;
+import com.newbie.easygo.common.MainManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -66,6 +67,9 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         });
     }
 
+    /**
+     * 检查是否已有用户
+     */
     void checkUserInfo() {
         String etUser = user.getText().toString();
         String etPsw = password.getText().toString();
@@ -113,15 +117,25 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            /**
+             * 点击注册
+             */
             case R.id.signin:
                 checkUserInfo();
                 break;
+            /**
+             * 点击返回
+             */
             case R.id.back:
                 onBackPressed();
                 break;
         }
     }
 
+
+    /**
+     * 返回登陆界面
+     */
     @Override
     public void onBackPressed() {
         Intent intent = new Intent();

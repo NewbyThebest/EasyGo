@@ -1,4 +1,4 @@
-package com.newbie.easygo;
+package com.newbie.easygo.common;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +15,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //沉浸式状态栏
         ImmersionBar.with(this).statusBarDarkFont(true).init();
     }
 
